@@ -17,7 +17,7 @@
       <label for="password">Password:</label>
       <input type="password" id="password" name="password" placeholder="Password" required>
 
-      <button class="custom-btn btn-8">Log In</button>
+      <button class="custom-btn btn-8" id="signUp" >Log In</button>
   </div>
 </body>
 
@@ -45,8 +45,22 @@
     const database = getDatabase(app);
     const auth = getAuth();
 
-    document.getElementById('signUp').addEventListener('click',(e)=>
+    const signUpbutton = document.getElementById('signUp');
+
+    
+    auth.onAuthStateChanged((user)=>{
+      //console.log(user);
+      if(user)
+      {
+        window.location.href="index.html";
+        clearUserInputFeilds();
+      }
+else
+{
+    signUpbutton.addEventListener('click',(e)=>
     {
+        e.preventDefault();
+
         var email = document.getElementById('email').value;
         var username = document.getElementById('username').value;
         var password = document.getElementById('password').value;
@@ -56,12 +70,13 @@
         .then((userCredential)=> {
             const user = userCredential.user;
 
+            //save user information to the database
             set(ref(database, 'user/' + user.uid),
             {
                 username : username,
                 email : email
             })
-            alert('user Created');
+            window.location.href="index.html";
     })
     .catch((error)=>
     {
@@ -71,5 +86,7 @@
         alert(errorMessage);
     })
     });
+    }
+});
   </script>
 </html>
